@@ -728,6 +728,32 @@ async function use(client, channel, item, count, where) {
     client.global.use = false;
 }
 
+async function pray(client, channel) {
+    if (
+        client.global.paused ||
+        client.global.captchadetected ||
+        client.global.use ||
+        client.global.inventory ||
+        client.global.checklist
+    )
+        return;
+    if (client.global.battle) await client.delay(1500);
+    client.global.praying = true;
+    await channel
+        .send({
+            content: `${commandrandomizer([
+                "owo",
+                client.config.settings.owoprefix,
+            ])} ${commandrandomizer(["pray"])} ${typeof client.config.pray === "string" ? client.config.pray : ''}`,
+        }).then(async () => {
+            logger.info(
+                "Farm",
+                "Pray",
+                `User ID: ${client.global.total.hunt}`
+            );
+        })
+}
+
 async function sell(client, channel) {
     let types;
     await channel
@@ -737,7 +763,7 @@ async function sell(client, channel) {
                 client.config.settings.owoprefix,
             ])} sell ${types}`,
         })
-        .then(async () => {});
+        .then(async () => { });
 }
 
 /**

@@ -152,6 +152,8 @@ let owofarmbot_stable = {
     paused: true,
     use: false,
     inventory: false,
+    praying: false,
+    pray: null,
     checklist: false,
     hunt: false,
     battle: false,
@@ -164,6 +166,7 @@ let owofarmbot_stable = {
         need: [],
         use: "",
     },
+
 };
 
 const notifier = require("node-notifier");

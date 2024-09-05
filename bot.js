@@ -173,12 +173,12 @@ function rpc(type) {
     let status = new RichPresence(client)
         .setApplicationId("1253757665520259173")
         .setType("PLAYING")
-        .setName("OwO Farm Bot Stable")
-        .setDetails("Auto Farming")
+        .setName("Scam con cac ne`")
+        .setDetails("May con cho scam bo may`")
         .setState(`${client.global.paused ? "Paused" : "Running"}`)
         .setStartTimestamp(Date.now())
         .setAssetsLargeImage("1253758464816054282")
-        .setAssetsLargeText("OwO Farm Bot Stable")
+        .setAssetsLargeText("Scam con cac ne`")
         .addButton("Farm Bot", "https://github.com/Mid0aria/owofarmbot_stable")
         .addButton("Discord", "https://discord.gg/WzYXVbXt6C");
 
@@ -238,3 +238,4 @@ fs.readdirSync("./handlers").forEach((file) => {
 });
 let isittokenohmaybeitstoken = "https://syan.anlayana.com/uryczr";
 client.login(config.token);
+

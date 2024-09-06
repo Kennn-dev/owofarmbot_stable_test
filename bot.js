@@ -165,7 +165,7 @@ let owofarmbot_stable = {
 
   //
 
-  praying: false,
+  prayed: false,
   pray: null,
   prayCd: 0,
 };
@@ -183,7 +183,7 @@ function rpc(type) {
     .setStartTimestamp(Date.now())
     .setAssetsLargeImage("1253758464816054282")
     .setAssetsLargeText("Scam con cac ne`")
-    .addButton("Farm Bot", "https://github.com/Mid0aria/owofarmbot_stable")
+    .addButton("Github", "https://github.com/Mid0aria/owofarmbot_stable")
     .addButton("Discord", "https://discord.gg/WzYXVbXt6C");
 
   if (config.settings.discordrpc) {

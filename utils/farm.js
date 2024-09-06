@@ -3,6 +3,7 @@ const { logger } = require("./logger");
 const commandrandomizer = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 module.exports = async (client, message) => {
+  logger.info("Farm", "Status", "Watching");
   if (client.global.paused || client.global.captchadetected) return;
   logger.info("Farm", "Paused", client.global.paused);
   let channel = client.channels.cache.get(client.config.commandschannelid);
@@ -16,21 +17,15 @@ module.exports = async (client, message) => {
   } else {
     await client.delay(2000);
     if (client.config.commands.hunt) {
-      console.log("hunt start");
       hunt(client, channel);
     }
 
     if (client.config.commands.pray) {
-      console.log("pray start", client.config.commands.hunt);
-      if (client.config.commands.hunt) {
-        await client.delay(2000);
-
-        pray(client, channel);
-      }
+      await client.delay(2000);
+      pray(client, channel);
     }
 
     if (client.config.commands.battle) {
-      console.log("battle start", client.config.commands.hunt);
       if (client.config.commands.hunt) {
         await client.delay(2000);
         battle(client, channel);
@@ -184,11 +179,8 @@ async function checklist(client, channel, type) {
           }
         }
         if (client.config.commands.pray) {
-          console.log("pray start", client.config.commands.hunt);
-          if (client.config.commands.hunt) {
-            await client.delay(2000);
-            pray(client, channel);
-          }
+          pray(client, channel);
+
         }
       }
     });
@@ -215,6 +207,7 @@ async function inventory(client, channel, type) {
               await new Promise((resolve) => setTimeout(resolve, 1000));
             }
           }
+
         } while (message && message.author.id !== "408785106942164992");
         let invcontent = message.content;
 
@@ -685,27 +678,22 @@ async function use(client, channel, item, count, where) {
   client.global.use = false;
 }
 
+
+// If pray was not make ,interval with short time
+// If pray made successfully, waiting to action after 5m
+const prayShortDelay = 5_000
+const prayLongDelay = 60_000 * 5
+
 async function pray(client, channel) {
-  const timer = 60_000 * 5;
-  //   const timer = 5000;
-  await prayAction(client, channel);
-
-  setInterval(async () => {
-    await prayAction(client, channel);
-  }, timer);
+  let delay = prayShortDelay
+  if (client.global.pray !== null && client.global.prayed === true) {
+    delay = prayLongDelay
+  }
+  setTimeout(() => {
+    prayAction(client, channel, delay);
+  }, delay)
 }
 
-async function sell(client, channel) {
-  let types;
-  await channel
-    .send({
-      content: `${commandrandomizer([
-        "owo",
-        client.config.settings.owoprefix,
-      ])} sell ${types}`,
-    })
-    .then(async () => {});
-}
 
 /**
  * OTHER FUNCTIONS
@@ -735,7 +723,7 @@ async function elaina2(client, channel) {
 }
 
 // Only interval when pray action was success
-async function prayAction(client, channel) {
+async function prayAction(client, channel, delay) {
   if (
     client.global.paused ||
     client.global.captchadetected ||
@@ -744,42 +732,56 @@ async function prayAction(client, channel) {
     client.global.checklist ||
     client.config.commands.pray === false ||
     client.global.pray === null
-  )
-    return;
-
-  client.global.praying = true;
+  ) {
+    client.global.prayed = false
+    setTimeout(() => {
+      prayAction(client, channel, prayShortDelay);
+    }, prayShortDelay)
+    return
+  }
 
   await channel
     .send({
       content: `${commandrandomizer([
         "owo",
         client.config.settings.owoprefix,
-      ])} ${commandrandomizer(["pray"])} ${
-        client.global.pray ? "<@" + client.global.pray + ">" : ""
-      }`,
+      ])} ${commandrandomizer(["pray"])} ${client.global.pray ? "<@" + client.global.pray + ">" : ""
+        }`,
     })
     .then(async () => {
+
+
+      let message = null;
+      let lastMessages = await channel.messages.fetch({
+        limit: 1,
+      });
+      if (lastMessages.size > 0) {
+        message = lastMessages.last();
+        if (message.author.id !== "408785106942164992") {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        console.log(message)
+        // if "Slow down and try the command again Xms"
+        // delay 
+      }
       client.global.total.pray++;
       logger.info(
         "Farm",
         "Pray",
-        `Total pray : ${client.global.total.pray} 🙏`
+        `Pray for user ${client.global.pray}`
       );
-      client.global.praying = false;
-    });
-  //   await channel
-  //     .send({
-  //       content: `prayyyy `,
-  //     })
-  //     .then(async () => {
-  //       client.global.total.pray++;
-  //       logger.info(
-  //         "Farm",
-  //         "Pray",
-  //         `Total pray : ${client.global.total.pray} 🙏`
-  //       );
-  //       client.global.praying = false;
-  //     });
+      logger.info(
+        "Farm",
+        "Pray",
+        `🙏 Total prays : ${client.global.total.pray}`
+      );
+      client.global.prayed = true
 
-  await client.delay(10500);
+      setTimeout(() => {
+
+        prayAction(client, channel, prayLongDelay);
+      }, prayLongDelay)
+    });
+
 }

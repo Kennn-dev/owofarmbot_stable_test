@@ -3,13 +3,10 @@ module.exports = {
     name: "pray",
   },
   run: async (client, message, args) => {
-    console.log(client.config.commands);
-    console.log(client.global);
     // Feature enabled
     // Command not running
     if (
-      client.config.commands.pray === true &&
-      client.global.praying === false
+      client.config.commands.pray
     ) {
       if (client.global.captchadetected) {
         return;
@@ -17,7 +14,7 @@ module.exports = {
 
       client.rpc("update");
       // await message.delete();
-      const userId = message.mentions.users.first().id;
+      const userId = (message.mentions.users?.first()?.id) || null;
       console.log({ userId });
 
       if (!userId) {

@@ -8,6 +8,8 @@ module.exports = async (client, message) => {
             message.channel.id === client.config.owodmchannelid)
     ) {
         if (
+            msgcontent.includes(":warning:") ||
+            msgcontent.includes("Please complete your captcha to verify that you are human") ||
             msgcontent.includes("please complete your captcha") ||
             msgcontent.includes("verify that you are human") ||
             msgcontent.includes("are you a real human") ||
@@ -38,12 +40,12 @@ module.exports = async (client, message) => {
                 });
             }
             if (client.config.settings.captcha.alerttype.prompt) {
-                var promptmessage = `Captcha detected! Solve the captcha and type ${client.config.prefix}resume in farm channel`;
+
 
                 const psCommands = [
                     "Add-Type -AssemblyName PresentationFramework",
                     "[System.Windows.MessageBox]::" +
-                        `Show(\'${promptmessage}\', \'OwO Farm Bot Stable\', \'OK\', \'Warning\')`,
+                    `Show(\'${msgcontent}\', \'OwO Farm Bot Stable\', \'OK\', \'Warning\')`,
                 ];
                 const psScript = psCommands.join("; ");
                 client.childprocess.exec(

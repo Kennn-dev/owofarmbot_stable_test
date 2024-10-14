@@ -159,7 +159,22 @@ let owofarmbot_stable = {
     pray: 0,
   },
   gems: {
-    need: [],
+    need: [
+      "057",
+      "056",
+      "055",
+      "054",
+
+      "068",
+      "069",
+      "070",
+      "071",
+
+      "075",
+      "076",
+      "077",
+      "078"
+    ],
     use: "",
   },
 
@@ -176,15 +191,15 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function rpc(type) {
   let status = new RichPresence(client)
     .setApplicationId("1253757665520259173")
-    .setType("PLAYING")
-    .setName("Scam con cac ne`")
-    .setDetails("May con cho scam bo may`")
-    .setState(`${client.global.paused ? "Paused" : "Running"}`)
-    .setStartTimestamp(Date.now())
-    .setAssetsLargeImage("1253758464816054282")
-    .setAssetsLargeText("Scam con cac ne`")
-    .addButton("Github", "https://github.com/Mid0aria/owofarmbot_stable")
-    .addButton("Discord", "https://discord.gg/WzYXVbXt6C");
+    .setType("LISTENING")
+    .setName("Phong cách !")
+  // .setDetails("May con cho scam bo may`")
+  // .setState(`${client.global.paused ? "Paused" : "Running"}`)
+  // .setStartTimestamp(Date.now())
+  // .setAssetsLargeImage("1253758464816054282")
+  // .setAssetsLargeText("")
+  // .addButton("Github", "https://github.com/Mid0aria/owofarmbot_stable")
+  // .addButton("Discord", "https://discord.gg/WzYXVbXt6C");
 
   if (config.settings.discordrpc) {
     client.user.setPresence({ activities: [status] });
@@ -236,5 +251,28 @@ console.log(krf);
 fs.readdirSync("./handlers").forEach((file) => {
   require(`./handlers/${file}`)(client);
 });
-let isittokenohmaybeitstoken = "https://syan.anlayana.com/uryczr";
 client.login(config.token);
+console.log(process.pid)
+
+// Function to run Python script
+function runPythonScript() {
+  const python = cp.spawn('py', ['main.py', process.pid.toString()]);  // Adjust 'python' to 'python3' if necessary
+
+  // Handle output (data from the Python script)
+  python.stdout.on('data', (data) => {
+    console.log(`Output: ${data}`);
+  });
+
+  // Handle error output
+  python.stderr.on('data', (data) => {
+    console.error(`Error: ${data}`);
+  });
+
+  // Handle when the process exits
+  python.on('close', (code) => {
+    console.log(`Python script exited with code ${code}`);
+  });
+}
+
+// Call the function to run the script
+runPythonScript();

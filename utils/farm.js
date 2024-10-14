@@ -16,14 +16,17 @@ module.exports = async (client, message) => {
     checklist(client, channel);
   } else {
     await client.delay(2000);
+    if (client.config.commands.pray) {
+      console.log("Ready to pray")
+      pray(client, channel);
+    }
+
     if (client.config.commands.hunt) {
+      await client.delay(1000);
       hunt(client, channel);
     }
 
-    if (client.config.commands.pray) {
-      await client.delay(2000);
-      pray(client, channel);
-    }
+
 
     if (client.config.commands.battle) {
       if (client.config.commands.hunt) {
@@ -169,6 +172,11 @@ async function checklist(client, channel, type) {
         inventory(client, channel, "checklist");
       } else {
         logger.info("Farm", "Checklist", `Paused: ${client.global.checklist}`);
+        if (client.config.commands.pray) {
+          console.log("Ready to pray")
+          pray(client, channel);
+
+        }
         if (client.config.commands.hunt) {
           hunt(client, channel);
         }
@@ -178,10 +186,7 @@ async function checklist(client, channel, type) {
             battle(client, channel);
           }
         }
-        if (client.config.commands.pray) {
-          pray(client, channel);
 
-        }
       }
     });
 }
@@ -249,6 +254,10 @@ async function inventory(client, channel, type) {
         await client.delay(5000);
         client.global.inventory = false;
         logger.info("Farm", "Inventory", `Paused: ${client.global.inventory}`);
+        if (client.config.commands.pray) {
+          console.log("Ready to pray")
+          pray(client, channel);
+        }
         if (client.config.commands.hunt) {
           hunt(client, channel);
         }
@@ -505,7 +514,7 @@ async function hunt(client, channel) {
         client.global.gems.need = [];
         client.global.gems.use = "";
         if (huntmsgcontent) {
-          let requiredGems = ["gem1", "gem3", "gem4", "star"];
+          let requiredGems = ["gem1", "gem3", "gem4"];
           requiredGems.forEach((gem) => {
             if (!huntmsgcontent.includes(gem)) {
               client.global.gems.need.push(gem);
@@ -528,7 +537,7 @@ async function hunt(client, channel) {
   }
   await client.delay(10500);
 
-  if (client.config.settings.inventory.check) {
+  if (client.config.settings.inventory.check && client.global.gems.need.length > 0) {
     await inventory(client, channel);
   }
 
@@ -578,7 +587,7 @@ async function hunt(client, channel) {
           client.global.gems.need = [];
           client.global.gems.use = "";
           if (huntmsgcontent) {
-            let requiredGems = ["gem1", "gem3", "gem4", "star"];
+            let requiredGems = ["gem1", "gem3", "gem4"];
             requiredGems.forEach((gem) => {
               if (!huntmsgcontent.includes(gem)) {
                 client.global.gems.need.push(gem);
@@ -600,7 +609,7 @@ async function hunt(client, channel) {
     }
     await client.delay(10500);
 
-    if (client.config.settings.inventory.check) {
+    if (client.config.settings.inventory.check && client.global.gems.need.length > 0) {
       await inventory(client, channel);
     }
   }, 16200);
@@ -724,11 +733,10 @@ async function elaina2(client, channel) {
 
 // Only interval when pray action was success
 async function prayAction(client, channel, delay) {
+  console.log("Pray start", client.config.commands.pray, client.global.pray)
   if (
     client.global.paused ||
     client.global.captchadetected ||
-    client.global.use ||
-    client.global.inventory ||
     client.global.checklist ||
     client.config.commands.pray === false ||
     client.global.pray === null
